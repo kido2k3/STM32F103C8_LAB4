@@ -10,7 +10,7 @@
 
 #include"main.h"
 
-#define FREQ_OF_TIM			100
+#define FREQ_OF_TIM			100.0
 
 #define PORT_TESTING_LED	GPIOC
 #define	PIN_TESTING_LED		GPIO_PIN_13

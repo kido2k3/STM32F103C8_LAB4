@@ -16,8 +16,8 @@ void led_blinking2(void){
 }
 void init(void){
 	HAL_TIM_Base_Start_IT(&htim2);
-	sch_add_task(led_blinking, 1000, 1000);
-	//sch_add_task(led_blinking2, 0, 2000);
+	sch_add_task(led_blinking, 0, 3000);
+	sch_add_task(led_blinking2, 0, 5000);
 }
 
 void loop(void){
@@ -27,7 +27,5 @@ void loop(void){
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance == htim2.Instance){
 		sch_update();
-
 	}
-
 }
