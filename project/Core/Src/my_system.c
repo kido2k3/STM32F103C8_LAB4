@@ -16,12 +16,15 @@ void led_blinking2(void){
 }
 void init(void){
 	HAL_TIM_Base_Start_IT(&htim2);
-	sch_add_task(led_blinking, 0, 3000);
-	sch_add_task(led_blinking2, 0, 5000);
+	button_init();
+
+	sch_add_task(led_blinking2, 0, 1000);
+	sch_add_task(button_read, 0, 10);
 }
 
 void loop(void){
 	sch_dispatch();
+	HAL_GPIO_WritePin(PORT_TESTING_LED, PIN_TESTING_LED, is_button_long_pressed(0));
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){

@@ -14,5 +14,9 @@
 
 #define PORT_TESTING_LED	GPIOC
 #define	PIN_TESTING_LED		GPIO_PIN_13
+
+#define	PORT_BUTTON1		GPIOA
+#define PIN_BUTTON1			GPIO_PIN_6
+
 typedef uint8_t	bool;
 #endif /* INC_MY_DEFINE_H_ */
