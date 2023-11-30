@@ -1,5 +1,8 @@
 ../Core/Src/my_system.c:10:6:led_blinking	8	static
-../Core/Src/my_system.c:14:6:led_blinking2	8	static
-../Core/Src/my_system.c:17:6:init	8	static
-../Core/Src/my_system.c:25:6:loop	8	static
-../Core/Src/my_system.c:30:6:HAL_TIM_PeriodElapsedCallback	16	static
+../Core/Src/my_system.c:15:6:led_blinking1	8	static
+../Core/Src/my_system.c:20:6:led_blinking2	8	static
+../Core/Src/my_system.c:24:6:led_blinking3	8	static
+../Core/Src/my_system.c:28:6:led_blinking4	8	static
+../Core/Src/my_system.c:32:6:init	8	static
+../Core/Src/my_system.c:46:6:loop	8	static
+../Core/Src/my_system.c:52:6:HAL_TIM_PeriodElapsedCallback	16	static

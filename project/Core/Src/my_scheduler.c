@@ -9,9 +9,9 @@
 
 /*
 @brief: pTask - pointer pointing to the function that will run
-		counter - the amount of remaining time or the time after the previous task
-		period - the amount of cycle time to run task
-		next_task - pointer pointing to the next task
+        counter - the amount of remaining time or the time after the previous task
+        period - the amount of cycle time to run task
+        next_task - pointer pointing to the next task
 */
 struct task
 {
@@ -26,15 +26,13 @@ struct task
 struct
 {
     struct task *top;
-    // struct task *bottom;
-    // uint32_t time_length;
 } stack_task;
 // struct task *dispatcher;
 /*
  * @brief:	add a new task to the task stack
  * @para:	pTask - pointer pointing to the function that will run
-			delay - the amount of time after which the task will run
-			period - the amount of cycle time to run task
+            delay - the amount of time after which the task will run
+            period - the amount of cycle time to run task
  * @retval:	1 - add successfully
  * 			0 - add badly
  * */
@@ -42,24 +40,14 @@ bool sch_add_task(void (*pTask)(), uint16_t delay, uint16_t period)
 {
     struct task *my_task = (struct task *)malloc(sizeof(struct task));
     my_task->pTask = pTask;
-    my_task->counter = delay *FREQ_OF_TIM/1000;
+    my_task->counter = delay * FREQ_OF_TIM / 1000;
     my_task->period = period;
     my_task->next_task = 0;
     if (stack_task.top == 0)
     {
         stack_task.top = my_task;
-        // stack_task.bottom = stack_task.top;
-        // stack_task.time_length = stack_task.top->counter;
         return 1;
     }
-    // if (delay >= stack_task.time_length)
-    // {
-    //     my_task->counter = delay - stack_task.time_length;
-    //     stack_task.bottom->next_task = my_task;
-    //     stack_task.bottom = stack_task.bottom->next_task;
-    //     stack_task.time_length += my_task->counter;
-    //     return 1;
-    // }
     struct task *pre = stack_task.top;
     struct task *cur = stack_task.top;
     while (cur && my_task->counter >= cur->counter)
@@ -112,8 +100,8 @@ void sch_delete_task(struct task *del_task)
 /*
  * @brief:	run the top task and update if over remainning time
  * @para:	none
- * @retval:	1 - run succesfully
- * 			0 - run badly
+ * @retval:	1 - run successfully
+ *			0 - run badly
  * */
 bool sch_dispatch(void)
 {
