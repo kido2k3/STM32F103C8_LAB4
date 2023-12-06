@@ -7,7 +7,6 @@
 
 #include "my_scheduler.h"
 
-#define FREQ_OF_TIM 1000 //1kHz
 /*
  @brief: pTask - pointer pointing to the function that will run
  counter - the amount of remaining time or the time after the previous task
@@ -31,11 +30,7 @@ extern TIM_HandleTypeDef htim2;
 void sch_init(void) {
 	HAL_TIM_Base_Start_IT(&htim2);
 }
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	if (htim->Instance == htim2.Instance) {
-		sch_update();
-	}
-}
+
 //******************END TIMER*********************
 /*
  * @brief:	add a new task to the task stack

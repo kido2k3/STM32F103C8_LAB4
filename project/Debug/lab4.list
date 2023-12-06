@@ -29,23 +29,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  12 .comment      00000043  00000000  00000000  00020085  2**0
                   CONTENTS, READONLY
- 13 .debug_info   000088dd  00000000  00000000  000200c8  2**0
+ 13 .debug_info   00008ee6  00000000  00000000  000200c8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00001b5d  00000000  00000000  000289a5  2**0
+ 14 .debug_abbrev 00001c3a  00000000  00000000  00028fae  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_aranges 00000a10  00000000  00000000  0002a508  2**3
+ 15 .debug_aranges 00000a20  00000000  00000000  0002abe8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_rnglists 000007ad  00000000  00000000  0002af18  2**0
+ 16 .debug_rnglists 000007b9  00000000  00000000  0002b608  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  00017958  00000000  00000000  0002b6c5  2**0
+ 17 .debug_macro  0001796a  00000000  00000000  0002bdc1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   0000ba5d  00000000  00000000  0004301d  2**0
+ 18 .debug_line   0000babc  00000000  00000000  0004372b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    00087a2e  00000000  00000000  0004ea7a  2**0
+ 19 .debug_str    00087a57  00000000  00000000  0004f1e7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00002c94  00000000  00000000  000d64a8  2**2
+ 20 .debug_frame  00002cd4  00000000  00000000  000d6c40  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000005d  00000000  00000000  000d913c  2**0
+ 21 .debug_line_str 0000005d  00000000  00000000  000d9914  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1576,12 +1576,12 @@ bool is_button_long_pressed(unsigned i) {
  8000e38:	200000c0 	.word	0x200000c0
 
 08000e3c <sch_add_task>:
-            period - the amount of cycle time to run task
+ delay - the amount of time after which the task will run
+ period - the amount of cycle time to run task
  * @retval:	1 - add successfully
  * 			0 - add badly
  * */
-bool sch_add_task(void (*pTask)(), uint16_t delay, uint16_t period)
-{
+bool sch_add_task(void (*pTask)(), uint16_t delay, uint16_t period) {
  8000e3c:	b580      	push	{r7, lr}
  8000e3e:	b086      	sub	sp, #24
  8000e40:	af00      	add	r7, sp, #0
@@ -1590,16 +1590,16 @@ bool sch_add_task(void (*pTask)(), uint16_t delay, uint16_t period)
  8000e46:	807b      	strh	r3, [r7, #2]
  8000e48:	4613      	mov	r3, r2
  8000e4a:	803b      	strh	r3, [r7, #0]
-    struct task *my_task = (struct task *)malloc(sizeof(struct task));
+	struct task *my_task = (struct task*) malloc(sizeof(struct task));
  8000e4c:	200c      	movs	r0, #12
  8000e4e:	f001 fd69 	bl	8002924 <malloc>
  8000e52:	4603      	mov	r3, r0
  8000e54:	60fb      	str	r3, [r7, #12]
-    my_task->pTask = pTask;
+	my_task->pTask = pTask;
  8000e56:	68fb      	ldr	r3, [r7, #12]
  8000e58:	687a      	ldr	r2, [r7, #4]
  8000e5a:	601a      	str	r2, [r3, #0]
-    my_task->counter = delay * FREQ_OF_TIM / 1000;
+	my_task->counter = delay * FREQ_OF_TIM / 1000;
  8000e5c:	887b      	ldrh	r3, [r7, #2]
  8000e5e:	4618      	mov	r0, r3
  8000e60:	f7ff fac6 	bl	80003f0 <__aeabi_i2d>
@@ -1622,40 +1622,44 @@ bool sch_add_task(void (*pTask)(), uint16_t delay, uint16_t period)
  8000e8e:	b29a      	uxth	r2, r3
  8000e90:	68fb      	ldr	r3, [r7, #12]
  8000e92:	809a      	strh	r2, [r3, #4]
-    my_task->period = period;
+	my_task->period = period;
  8000e94:	68fb      	ldr	r3, [r7, #12]
  8000e96:	883a      	ldrh	r2, [r7, #0]
  8000e98:	80da      	strh	r2, [r3, #6]
-    my_task->next_task = 0;
+	my_task->next_task = 0;
  8000e9a:	68fb      	ldr	r3, [r7, #12]
  8000e9c:	2200      	movs	r2, #0
  8000e9e:	609a      	str	r2, [r3, #8]
-    if (stack_task.top == 0)
+	if (stack_task.top == 0) {
  8000ea0:	4b25      	ldr	r3, [pc, #148]	; (8000f38 <sch_add_task+0xfc>)
  8000ea2:	681b      	ldr	r3, [r3, #0]
  8000ea4:	2b00      	cmp	r3, #0
  8000ea6:	d104      	bne.n	8000eb2 <sch_add_task+0x76>
-    {
-        stack_task.top = my_task;
+		stack_task.top = my_task;
  8000ea8:	4a23      	ldr	r2, [pc, #140]	; (8000f38 <sch_add_task+0xfc>)
  8000eaa:	68fb      	ldr	r3, [r7, #12]
  8000eac:	6013      	str	r3, [r2, #0]
-        return 1;
+		// stack_task.bottom = stack_task.top;
+		// stack_task.time_length = stack_task.top->counter;
+		return 1;
  8000eae:	2301      	movs	r3, #1
  8000eb0:	e039      	b.n	8000f26 <sch_add_task+0xea>
-    }
-    struct task *pre = stack_task.top;
+	//     stack_task.bottom->next_task = my_task;
+	//     stack_task.bottom = stack_task.bottom->next_task;
+	//     stack_task.time_length += my_task->counter;
+	//     return 1;
+	// }
+	struct task *pre = stack_task.top;
  8000eb2:	4b21      	ldr	r3, [pc, #132]	; (8000f38 <sch_add_task+0xfc>)
  8000eb4:	681b      	ldr	r3, [r3, #0]
  8000eb6:	617b      	str	r3, [r7, #20]
-    struct task *cur = stack_task.top;
+	struct task *cur = stack_task.top;
  8000eb8:	4b1f      	ldr	r3, [pc, #124]	; (8000f38 <sch_add_task+0xfc>)
  8000eba:	681b      	ldr	r3, [r3, #0]
  8000ebc:	613b      	str	r3, [r7, #16]
-    while (cur && my_task->counter >= cur->counter)
+	while (cur && my_task->counter >= cur->counter) {
  8000ebe:	e00c      	b.n	8000eda <sch_add_task+0x9e>
-    {
-        my_task->counter = my_task->counter - cur->counter;
+		my_task->counter = my_task->counter - cur->counter;
  8000ec0:	68fb      	ldr	r3, [r7, #12]
  8000ec2:	889a      	ldrh	r2, [r3, #4]
  8000ec4:	693b      	ldr	r3, [r7, #16]
@@ -1664,14 +1668,14 @@ bool sch_add_task(void (*pTask)(), uint16_t delay, uint16_t period)
  8000eca:	b29a      	uxth	r2, r3
  8000ecc:	68fb      	ldr	r3, [r7, #12]
  8000ece:	809a      	strh	r2, [r3, #4]
-        pre = cur;
+		pre = cur;
  8000ed0:	693b      	ldr	r3, [r7, #16]
  8000ed2:	617b      	str	r3, [r7, #20]
-        cur = cur->next_task;
+		cur = cur->next_task;
  8000ed4:	693b      	ldr	r3, [r7, #16]
  8000ed6:	689b      	ldr	r3, [r3, #8]
  8000ed8:	613b      	str	r3, [r7, #16]
-    while (cur && my_task->counter >= cur->counter)
+	while (cur && my_task->counter >= cur->counter) {
  8000eda:	693b      	ldr	r3, [r7, #16]
  8000edc:	2b00      	cmp	r3, #0
  8000ede:	d005      	beq.n	8000eec <sch_add_task+0xb0>
@@ -1681,39 +1685,36 @@ bool sch_add_task(void (*pTask)(), uint16_t delay, uint16_t period)
  8000ee6:	889b      	ldrh	r3, [r3, #4]
  8000ee8:	429a      	cmp	r2, r3
  8000eea:	d2e9      	bcs.n	8000ec0 <sch_add_task+0x84>
-    }
-    if (pre != cur)
+	}
+	if (pre != cur) {
  8000eec:	697a      	ldr	r2, [r7, #20]
  8000eee:	693b      	ldr	r3, [r7, #16]
  8000ef0:	429a      	cmp	r2, r3
  8000ef2:	d006      	beq.n	8000f02 <sch_add_task+0xc6>
-    {
-        pre->next_task = my_task;
+		pre->next_task = my_task;
  8000ef4:	697b      	ldr	r3, [r7, #20]
  8000ef6:	68fa      	ldr	r2, [r7, #12]
  8000ef8:	609a      	str	r2, [r3, #8]
-        my_task->next_task = cur;
+		my_task->next_task = cur;
  8000efa:	68fb      	ldr	r3, [r7, #12]
  8000efc:	693a      	ldr	r2, [r7, #16]
  8000efe:	609a      	str	r2, [r3, #8]
  8000f00:	e005      	b.n	8000f0e <sch_add_task+0xd2>
-    }
-    else
-    {
-        my_task->next_task = cur;
+	} else {
+		my_task->next_task = cur;
  8000f02:	68fb      	ldr	r3, [r7, #12]
  8000f04:	693a      	ldr	r2, [r7, #16]
  8000f06:	609a      	str	r2, [r3, #8]
-        stack_task.top = my_task;
+		stack_task.top = my_task;
  8000f08:	4a0b      	ldr	r2, [pc, #44]	; (8000f38 <sch_add_task+0xfc>)
  8000f0a:	68fb      	ldr	r3, [r7, #12]
  8000f0c:	6013      	str	r3, [r2, #0]
-    }
-    if (cur)
+	}
+	if (cur)
  8000f0e:	693b      	ldr	r3, [r7, #16]
  8000f10:	2b00      	cmp	r3, #0
  8000f12:	d007      	beq.n	8000f24 <sch_add_task+0xe8>
-        cur->counter -= my_task->counter;
+		cur->counter -= my_task->counter;
  8000f14:	693b      	ldr	r3, [r7, #16]
  8000f16:	889a      	ldrh	r2, [r3, #4]
  8000f18:	68fb      	ldr	r3, [r7, #12]
@@ -1722,7 +1723,7 @@ bool sch_add_task(void (*pTask)(), uint16_t delay, uint16_t period)
  8000f1e:	b29a      	uxth	r2, r3
  8000f20:	693b      	ldr	r3, [r7, #16]
  8000f22:	809a      	strh	r2, [r3, #4]
-    return 1;
+	return 1;
  8000f24:	2301      	movs	r3, #1
 }
  8000f26:	4618      	mov	r0, r3
@@ -1735,28 +1736,27 @@ bool sch_add_task(void (*pTask)(), uint16_t delay, uint16_t period)
  8000f38:	200000d4 	.word	0x200000d4
 
 08000f3c <sch_update>:
+/*
  * @brief:	decrease the remaining time of the top task
  * @para:	none
  * @retval:	none
  * */
-void sch_update(void)
-{
+void sch_update(void) {
  8000f3c:	b480      	push	{r7}
  8000f3e:	af00      	add	r7, sp, #0
-    if (stack_task.top == 0)
+	if (stack_task.top == 0)
  8000f40:	4b09      	ldr	r3, [pc, #36]	; (8000f68 <sch_update+0x2c>)
  8000f42:	681b      	ldr	r3, [r3, #0]
  8000f44:	2b00      	cmp	r3, #0
  8000f46:	d00b      	beq.n	8000f60 <sch_update+0x24>
-        return;
-    if (stack_task.top->counter > 0)
+		return;
+	if (stack_task.top->counter > 0) {
  8000f48:	4b07      	ldr	r3, [pc, #28]	; (8000f68 <sch_update+0x2c>)
  8000f4a:	681b      	ldr	r3, [r3, #0]
  8000f4c:	889b      	ldrh	r3, [r3, #4]
  8000f4e:	2b00      	cmp	r3, #0
  8000f50:	d007      	beq.n	8000f62 <sch_update+0x26>
-    {
-        stack_task.top->counter--;
+		stack_task.top->counter--;
  8000f52:	4b05      	ldr	r3, [pc, #20]	; (8000f68 <sch_update+0x2c>)
  8000f54:	681b      	ldr	r3, [r3, #0]
  8000f56:	889a      	ldrh	r2, [r3, #4]
@@ -1764,9 +1764,9 @@ void sch_update(void)
  8000f5a:	b292      	uxth	r2, r2
  8000f5c:	809a      	strh	r2, [r3, #4]
  8000f5e:	e000      	b.n	8000f62 <sch_update+0x26>
-        return;
+		return;
  8000f60:	bf00      	nop
-    }
+	}
 }
  8000f62:	46bd      	mov	sp, r7
  8000f64:	bc80      	pop	{r7}
@@ -1774,28 +1774,27 @@ void sch_update(void)
  8000f68:	200000d4 	.word	0x200000d4
 
 08000f6c <sch_delete_task>:
+/*
  * @brief:	delete a task in the stack and release the memory
  * @para:	del_task - the task need to be deleted
  * @retval:	none
  * */
-void sch_delete_task(struct task *del_task)
-{
+static void sch_delete_task(struct task *del_task) {
  8000f6c:	b580      	push	{r7, lr}
  8000f6e:	b082      	sub	sp, #8
  8000f70:	af00      	add	r7, sp, #0
  8000f72:	6078      	str	r0, [r7, #4]
-    if (del_task == 0)
+	if (del_task == 0) {
  8000f74:	687b      	ldr	r3, [r7, #4]
  8000f76:	2b00      	cmp	r3, #0
  8000f78:	d003      	beq.n	8000f82 <sch_delete_task+0x16>
-    {
-        return;
-    }
-    free(del_task);
+		return;
+	}
+	free(del_task);
  8000f7a:	6878      	ldr	r0, [r7, #4]
  8000f7c:	f001 fcda 	bl	8002934 <free>
  8000f80:	e000      	b.n	8000f84 <sch_delete_task+0x18>
-        return;
+		return;
  8000f82:	bf00      	nop
 }
  8000f84:	3708      	adds	r7, #8
@@ -1804,56 +1803,54 @@ void sch_delete_task(struct task *del_task)
 	...
 
 08000f8c <sch_dispatch>:
+ * @brief:	run the top task and update if over remainning time
  * @para:	none
  * @retval:	1 - run successfully
  *			0 - run badly
  * */
-bool sch_dispatch(void)
-{
+bool sch_dispatch(void) {
  8000f8c:	b580      	push	{r7, lr}
  8000f8e:	b082      	sub	sp, #8
  8000f90:	af00      	add	r7, sp, #0
-    if (stack_task.top == 0)
+	if (stack_task.top == 0)
  8000f92:	4b18      	ldr	r3, [pc, #96]	; (8000ff4 <sch_dispatch+0x68>)
  8000f94:	681b      	ldr	r3, [r3, #0]
  8000f96:	2b00      	cmp	r3, #0
  8000f98:	d101      	bne.n	8000f9e <sch_dispatch+0x12>
-        return 0;
+		return 0;
  8000f9a:	2300      	movs	r3, #0
  8000f9c:	e026      	b.n	8000fec <sch_dispatch+0x60>
-    if (stack_task.top->counter == 0)
+	if (stack_task.top->counter == 0) {
  8000f9e:	4b15      	ldr	r3, [pc, #84]	; (8000ff4 <sch_dispatch+0x68>)
  8000fa0:	681b      	ldr	r3, [r3, #0]
  8000fa2:	889b      	ldrh	r3, [r3, #4]
  8000fa4:	2b00      	cmp	r3, #0
  8000fa6:	d120      	bne.n	8000fea <sch_dispatch+0x5e>
-    {
-        (*stack_task.top->pTask)();
+		(*stack_task.top->pTask)();
  8000fa8:	4b12      	ldr	r3, [pc, #72]	; (8000ff4 <sch_dispatch+0x68>)
  8000faa:	681b      	ldr	r3, [r3, #0]
  8000fac:	681b      	ldr	r3, [r3, #0]
  8000fae:	4798      	blx	r3
-        struct task *temp = stack_task.top;
+		struct task *temp = stack_task.top;
  8000fb0:	4b10      	ldr	r3, [pc, #64]	; (8000ff4 <sch_dispatch+0x68>)
  8000fb2:	681b      	ldr	r3, [r3, #0]
  8000fb4:	607b      	str	r3, [r7, #4]
-        stack_task.top = stack_task.top->next_task;
+		stack_task.top = stack_task.top->next_task;
  8000fb6:	4b0f      	ldr	r3, [pc, #60]	; (8000ff4 <sch_dispatch+0x68>)
  8000fb8:	681b      	ldr	r3, [r3, #0]
  8000fba:	689b      	ldr	r3, [r3, #8]
  8000fbc:	4a0d      	ldr	r2, [pc, #52]	; (8000ff4 <sch_dispatch+0x68>)
  8000fbe:	6013      	str	r3, [r2, #0]
-        temp->next_task = 0;
+		temp->next_task = 0;
  8000fc0:	687b      	ldr	r3, [r7, #4]
  8000fc2:	2200      	movs	r2, #0
  8000fc4:	609a      	str	r2, [r3, #8]
-        if (temp->period != 0)
+		if (temp->period != 0) {
  8000fc6:	687b      	ldr	r3, [r7, #4]
  8000fc8:	88db      	ldrh	r3, [r3, #6]
  8000fca:	2b00      	cmp	r3, #0
  8000fcc:	d008      	beq.n	8000fe0 <sch_dispatch+0x54>
-        {
-            sch_add_task(temp->pTask, temp->period, temp->period);
+			sch_add_task(temp->pTask, temp->period, temp->period);
  8000fce:	687b      	ldr	r3, [r7, #4]
  8000fd0:	6818      	ldr	r0, [r3, #0]
  8000fd2:	687b      	ldr	r3, [r7, #4]
@@ -1862,15 +1859,15 @@ bool sch_dispatch(void)
  8000fd8:	88db      	ldrh	r3, [r3, #6]
  8000fda:	461a      	mov	r2, r3
  8000fdc:	f7ff ff2e 	bl	8000e3c <sch_add_task>
-        }
-        sch_delete_task(temp);
+		}
+		sch_delete_task(temp);
  8000fe0:	6878      	ldr	r0, [r7, #4]
  8000fe2:	f7ff ffc3 	bl	8000f6c <sch_delete_task>
-        return 1;
+		return 1;
  8000fe6:	2301      	movs	r3, #1
  8000fe8:	e000      	b.n	8000fec <sch_dispatch+0x60>
-    }
-    return 0;
+	}
+	return 0;
  8000fea:	2300      	movs	r3, #0
 }
  8000fec:	4618      	mov	r0, r3

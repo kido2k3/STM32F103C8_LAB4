@@ -8,12 +8,10 @@
 #ifndef INC_MY_SCHEDULER_H_
 #define INC_MY_SCHEDULER_H_
 
-#include <my_keypadTTP229.h>
-#include"my_define.h"
-#include "my_lcd.h"
-#include<stdlib.h>
+#include "my_define.h"
+#include <stdlib.h>
 
-#define ONE_SECOND	1000
+#define ONE_SECOND 1000
 
 void sch_update(void);
 void sch_init(void);

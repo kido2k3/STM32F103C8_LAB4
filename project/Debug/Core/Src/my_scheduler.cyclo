@@ -1,4 +1,6 @@
-../Core/Src/my_scheduler.c:39:6:sch_add_task	6
-../Core/Src/my_scheduler.c:78:6:sch_update	3
-../Core/Src/my_scheduler.c:92:6:sch_delete_task	2
-../Core/Src/my_scheduler.c:106:6:sch_dispatch	4
+../Core/Src/my_scheduler.c:30:6:sch_init	1
+../Core/Src/my_scheduler.c:43:6:sch_add_task	6
+../Core/Src/my_scheduler.c:86:6:sch_update	3
+../Core/Src/my_scheduler.c:98:13:sch_delete_task	2
+../Core/Src/my_scheduler.c:110:6:sch_dispatch	4
+../Core/Src/my_scheduler.c:126:6:sch_remove_task	4
